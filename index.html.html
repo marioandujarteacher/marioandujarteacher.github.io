@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unidad 1 · Vocabulario y Gramática</title>
+<style>
+:root{
+  --purple:#5b2a83; --purple-d:#3f1c5c; --gold:#c9932e; --gold-l:#f7d98a;
+  --bg:#faf7f2; --card:#ffffff; --ink:#2b2530; --muted:#6d6478;
+  --ok:#2e8b57; --bad:#c0392b; --line:#e7ddf0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1c1723; --card:#251e2e; --ink:#f1ecf7; --muted:#b7abc4; --line:#3a3045;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1c1723; --card:#251e2e; --ink:#f1ecf7; --muted:#b7abc4; --line:#3a3045;
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+header{
+  background:linear-gradient(120deg,var(--purple),var(--purple-d));
+  color:#fff; padding:22px 18px calc(18px + env(safe-area-inset-top,0px));
+  padding-top:calc(22px + env(safe-area-inset-top,0px));
+  position:relative; overflow:hidden;
+}
+header::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:var(--gold);opacity:.25;border-radius:40%;}
+header h1{margin:0;font-size:1.5rem;}
+header p{margin:.3rem 0 0;opacity:.85;font-size:.9rem;}
+
+.tabs{display:flex;gap:8px;padding:14px 14px 0;max-width:980px;margin:0 auto;}
+.tab-btn{
+  flex:1; padding:12px 8px; border:none; border-radius:12px 12px 0 0; cursor:pointer;
+  font-weight:700; font-size:.95rem; background:var(--line); color:var(--muted);
+}
+.tab-btn.active{background:var(--card); color:var(--purple); box-shadow:0 -2px 0 var(--gold) inset;}
+
+main{max-width:980px;margin:0 auto;padding:16px;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+.subnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.subnav button{
+  border:1px solid var(--line); background:var(--card); color:var(--ink);
+  padding:8px 14px;border-radius:20px;cursor:pointer;font-size:.85rem;font-weight:600;
+}
+.subnav button.active{background:var(--purple);color:#fff;border-color:var(--purple);}
+
+.section{display:none;}
+.section.active{display:block;}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px;}
+.card h2{margin-top:0;color:var(--purple);font-size:1.15rem;}
+.card h3{color:var(--gold);font-size:.95rem;text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;}
+
+/* flashcards */
+.deck-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.flashcard{
+  width:min(320px,90%); height:190px; perspective:1000px; cursor:pointer;
+}
+.flashcard-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+.face{
+  position:absolute;inset:0;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:16px;backface-visibility:hidden;font-weight:700;font-size:1.2rem;
+}
+.face.front{background:linear-gradient(135deg,var(--purple),var(--purple-d));color:#fff;}
+.face.back{background:var(--gold-l);color:var(--purple-d);transform:rotateY(180deg);}
+.deck-controls{display:flex;gap:10px;align-items:center;}
+.deck-controls span{font-size:.85rem;color:var(--muted);}
+
+button.nav-btn{
+  background:var(--purple);color:#fff;border:none;border-radius:10px;padding:9px 16px;
+  cursor:pointer;font-weight:600;font-size:.9rem;
+}
+button.nav-btn:hover{background:var(--purple-d);}
+button.nav-btn:disabled{opacity:.4;cursor:default;}
+
+/* exercises */
+.ex-item{margin-bottom:14px;padding:12px;border:1px solid var(--line);border-radius:10px;}
+.ex-item.correct{border-color:var(--ok);background:rgba(46,139,87,.08);}
+.ex-item.wrong{border-color:var(--bad);background:rgba(192,57,43,.08);}
+select,input[type=text],textarea{
+  border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.9rem;
+  background:var(--bg);color:var(--ink);font-family:inherit;
+}
+textarea{width:100%;min-height:70px;resize:vertical;}
+.opt-row label{display:block;padding:6px 4px;cursor:pointer;border-radius:6px;}
+.opt-row label:hover{background:var(--line);}
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;padding:10px;background:var(--bg);border-radius:10px;}
+.word-bank span{background:var(--gold-l);color:var(--purple-d);padding:4px 10px;border-radius:14px;font-size:.85rem;font-weight:600;}
+.check-btn{margin-top:10px;}
+.feedback{margin-top:8px;font-weight:700;font-size:.85rem;}
+.feedback.ok{color:var(--ok);}
+.feedback.bad{color:var(--bad);}
+table.gram{width:100%;border-collapse:collapse;margin:10px 0;font-size:.9rem;}
+table.gram th{background:var(--purple);color:#fff;text-align:left;padding:7px 10px;}
+table.gram td{padding:7px 10px;border-bottom:1px solid var(--line);}
+table.gram tr:nth-child(even) td{background:var(--bg);}
+.tag{display:inline-block;background:var(--gold);color:#3a2600;font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+.score-badge{float:right;background:var(--gold-l);color:var(--purple-d);padding:4px 10px;border-radius:10px;font-size:.8rem;font-weight:700;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📘 Unidad 1 · Language Summary</h1>
+  <p>Household tasks · Free-time activities · Personality adjectives — Permission, prohibition, obligation y ability</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-panel="voc">🗂️ Vocabulario</button>
+  <button class="tab-btn" data-panel="gram">📐 Gramática</button>
+</div>
+
+<main>
+  <!-- ===================== VOCABULARIO ===================== -->
+  <section class="panel active" id="voc">
+    <div class="subnav" id="voc-subnav">
+      <button class="active" data-sec="household">Household tasks</button>
+      <button data-sec="freetime">Free-time activities</button>
+      <button data-sec="personality">Personality adjectives</button>
+    </div>
+
+    <!-- HOUSEHOLD -->
+    <div class="section active" id="household">
+      <div class="card">
+        <h3>Paso 1 · Flashcards</h3>
+        <div class="deck-wrap" data-deck="household"></div>
+      </div>
+      <div class="card">
+        <h3>Paso 2 · Ejercicio: Word bank (texto con huecos)</h3>
+        <p>Completa el diario de Emma con las palabras del banco.</p>
+        <div class="word-bank" id="wb-household"></div>
+        <div id="fill-household"></div>
+        <button class="nav-btn check-btn" onclick="checkFill('fill-household')">Corregir</button>
+        <p class="feedback" id="fb-fill-household"></p>
+      </div>
+      <div class="card">
+        <h3>Paso 3 · Ejercicio: Emparejar (inglés ↔ español)</h3>
+        <div id="match-household"></div>
+        <button class="nav-btn check-btn" onclick="checkMatch('match-household')">Corregir</button>
+        <p class="feedback" id="fb-match-household"></p>
+      </div>
+    </div>
+
+    <!-- FREETIME -->
+    <div class="section" id="freetime">
+      <div class="card">
+        <h3>Paso 1 · Flashcards</h3>
+        <div class="deck-wrap" data-deck="freetime"></div>
+      </div>
+      <div class="card">
+        <h3>Paso 2 · Ejercicio: Odd one out</h3>
+        <p>Marca la palabra que no encaja en cada fila.</p>
+        <div id="odd-freetime"></div>
+        <button class="nav-btn check-btn" onclick="checkOdd('odd-freetime')">Corregir</button>
+        <p class="feedback" id="fb-odd-freetime"></p>
+      </div>
+      <div class="card">
+        <h3>Paso 3 · Ejercicio: Clasificación (Individual / Equipo)</h3>
+        <div id="sort-freetime"></div>
+        <button class="nav-btn check-btn" onclick="checkSort('sort-freetime')">Corregir</button>
+        <p class="feedback" id="fb-sort-freetime"></p>
+      </div>
+    </div>
+
+    <!-- PERSONALITY -->
+    <div class="section" id="personality">
+      <div class="card">
+        <h3>Paso 1 · Flashcards <span class="tag">EXTRA</span></h3>
+        <div class="deck-wrap" data-deck="personality"></div>
+      </div>
+      <div class="card">
+        <h3>Paso 2 · Ejercicio: Reverse quiz</h3>
+        <p>Lee la definición y elige el adjetivo correcto.</p>
+        <div id="mc-personality"></div>
+        <button class="nav-btn check-btn" onclick="checkMC('mc-personality')">Corregir</button>
+        <p class="feedback" id="fb-mc-personality"></p>
+      </div>
+      <div class="card">
+        <h3>Paso 3 · Producción libre (constraint writing)</h3>
+        <p>Escribe 2-3 frases describiendo a un/a amigo/a. Usa <b>al menos 3</b> de estos adjetivos: cheerful, confident, generous, honest, loyal.</p>
+        <textarea id="free-personality" placeholder="My friend is..."></textarea>
+        <button class="nav-btn check-btn" onclick="selfCheck('free-personality','fb-free-personality')">Autoevaluar</button>
+        <p class="feedback" id="fb-free-personality"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GRAMÁTICA ===================== -->
+  <section class="panel" id="gram">
+    <div class="subnav" id="gram-subnav">
+      <button class="active" data-sec="g1">have to</button>
+      <button data-sec="g2">can (permission)</button>
+      <button data-sec="g3">must/mustn't</button>
+      <button data-sec="g4">be allowed to</button>
+      <button data-sec="g5">can (ability)</button>
+      <button data-sec="g6">should/ought to</button>
+    </div>
+
+    <!-- G1 -->
+    <div class="section active" id="g1">
+      <div class="card">
+        <h2>have to / don't have to</h2>
+        <table class="gram"><tr><th>Afirmativa</th><th></th></tr>
+        <tr><td>I / You / We / They <b>have to</b> study.</td><td rowspan="2"></td></tr>
+        <tr><td>He / She / It <b>has to</b> study.</td></tr>
+        <tr><th>Negativa</th><th></th></tr>
+        <tr><td>I / You / We / They <b>don't have to</b> study.</td><td></td></tr>
+        <tr><td>He / She / It <b>doesn't have to</b> study.</td><td></td></tr>
+        <tr><th>Preguntas</th><th></th></tr>
+        <tr><td>Do I/you/we/they have to study? · Does he/she/it have to study?</td><td></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Práctica · Fill-in-the-blanks contextualizado</h3>
+        <p>Completa el texto sobre las normas de la casa de Tom (have to / has to / don't have to / doesn't have to).</p>
+        <div id="fill-g1"></div>
+        <button class="nav-btn check-btn" onclick="checkFill('fill-g1')">Corregir</button>
+        <p class="feedback" id="fb-fill-g1"></p>
+      </div>
+    </div>
+
+    <!-- G2 -->
+    <div class="section" id="g2">
+      <div class="card">
+        <h2>can / can't (permission)</h2>
+        <table class="gram">
+        <tr><th>Afirmativa</th><th>Negativa</th></tr>
+        <tr><td>I can go out.</td><td>I can't go out.</td></tr>
+        <tr><th>Preguntas</th><th>Respuestas cortas</th></tr>
+        <tr><td>Can you go out?</td><td>Yes, you can. / No, you can't.</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Práctica · Sentence transformation</h3>
+        <p>Transforma cada frase usando <i>can / can't</i> según la palabra clave.</p>
+        <div id="trans-g2"></div>
+        <button class="nav-btn check-btn" onclick="checkFill('trans-g2')">Corregir</button>
+        <p class="feedback" id="fb-trans-g2"></p>
+      </div>
+    </div>
+
+    <!-- G3 -->
+    <div class="section" id="g3">
+      <div class="card">
+        <h2>must / mustn't</h2>
+        <table class="gram">
+        <tr><th>Afirmativa</th><th></th></tr>
+        <tr><td>I/You/He/She/It/We/They <b>must</b> wear a uniform.</td><td></td></tr>
+        <tr><th>Negativa</th><th></th></tr>
+        <tr><td>I/You/He/She/It/We/They <b>mustn't</b> wear trainers.</td><td></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Práctica · Detectives de errores</h3>
+        <p>Cada frase tiene un error con must/mustn't. Reescríbela correctamente.</p>
+        <div id="fill-g3"></div>
+        <button class="nav-btn check-btn" onclick="checkFill('fill-g3')">Corregir</button>
+        <p class="feedback" id="fb-fill-g3"></p>
+      </div>
+    </div>
+
+    <!-- G4 -->
+    <div class="section" id="g4">
+      <div class="card">
+        <h2>be allowed to</h2>
+        <table class="gram">
+        <tr><th>Afirmativa</th></tr><tr><td>I am allowed to watch the film.</td></tr>
+        <tr><th>Negativa</th></tr><tr><td>I'm not allowed to watch the film.</td></tr>
+        <tr><th>Preguntas</th></tr><tr><td>Am I allowed to watch the film?</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Práctica · Reverse quiz</h3>
+        <p>Te doy la respuesta. Escribe la pregunta con <i>be allowed to</i>.</p>
+        <div id="rev-g4"></div>
+        <button class="nav-btn check-btn" onclick="selfCheck('rev-g4','fb-rev-g4',true)">Ver respuestas modelo</button>
+        <p class="feedback" id="fb-rev-g4"></p>
+      </div>
+    </div>
+
+    <!-- G5 -->
+    <div class="section" id="g5">
+      <div class="card">
+        <h2>can / can't (ability)</h2>
+        <table class="gram">
+        <tr><th></th><th>Past</th><th>Present</th><th>Future</th></tr>
+        <tr><td>Afirmativa</td><td>I could sing.</td><td>I can sing.</td><td>I will be able to sing.</td></tr>
+        <tr><td>Negativa</td><td>I couldn't sing.</td><td>I can't sing.</td><td>I won't be able to sing.</td></tr>
+        <tr><td>Preguntas</td><td>Could you sing?</td><td>Can you sing?</td><td>Will you be able to sing?</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Práctica · Completa la tabla de conjugación</h3>
+        <div id="fill-g5"></div>
+        <button class="nav-btn check-btn" onclick="checkFill('fill-g5')">Corregir</button>
+        <p class="feedback" id="fb-fill-g5"></p>
+      </div>
+    </div>
+
+    <!-- G6 -->
+    <div class="section" id="g6">
+      <div class="card">
+        <h2>should / ought to</h2>
+        <table class="gram">
+        <tr><th>Afirmativa</th></tr><tr><td>You should / ought to go.</td></tr>
+        <tr><th>Negativa</th></tr><tr><td>We shouldn't go.</td></tr>
+        <tr><th>Preguntas</th></tr><tr><td>What should I do?</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Práctica · Opción múltiple con escenarios</h3>
+        <div id="mc-g6"></div>
+        <button class="nav-btn check-btn" onclick="checkMC('mc-g6')">Corregir</button>
+        <p class="feedback" id="fb-mc-g6"></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ---------- DATA ---------- */
+const decks = {
+  household:[["clean the bathroom","limpiar el baño"],["clean the windows","limpiar las ventanas"],
+    ["do the ironing","planchar"],["do the laundry","lavar la ropa"],
+    ["load / unload the dishwasher","cargar / vaciar el lavavajillas"],
+    ["make my own breakfast/lunch","hacerme el desayuno/la comida"],["make the bed","hacer la cama"],
+    ["prepare food","preparar comida"],["shop for food","hacer la compra"],
+    ["take the rubbish out","sacar la basura"],["tidy my room","ordenar mi habitación"],
+    ["vacuum the floor","pasar la aspiradora"],["wash up","fregar los platos"]],
+  freetime:[["athletics","atletismo"],["bowling","bolos"],["chess","ajedrez"],["climbing","escalada"],
+    ["fitness training","entrenamiento físico"],["gymnastics","gimnasia"],["handball","balonmano"],
+    ["hiking","senderismo"],["hockey","hockey"],["judo","judo"],["karate","kárate"],["surfing","surf"]],
+  personality:[["cheerful","alegre"],["confident","seguro/a de sí mismo/a"],["funny","gracioso/a"],
+    ["generous","generoso/a"],["helpful","servicial"],["honest","honesto/a"],["interesting","interesante"],
+    ["kind","amable"],["loyal","leal"]]
+};
+
+function buildDeck(container){
+  const key=container.dataset.deck, data=decks[key];
+  let i=0;
+  container.innerHTML=`
+    <div class="flashcard" id="fc-${key}"><div class="flashcard-inner">
+      <div class="face front"></div><div class="face back"></div>
+    </div></div>
+    <div class="deck-controls">
+      <button class="nav-btn" onclick="deckNav('${key}',-1)">← Anterior</button>
+      <span id="fc-count-${key}"></span>
+      <button class="nav-btn" onclick="deckNav('${key}',1)">Siguiente →</button>
+    </div>`;
+  const card=container.querySelector('.flashcard');
+  card.addEventListener('click',()=>card.classList.toggle('flipped'));
+  window['fcIndex_'+key]=0;
+  renderCard(key);
+}
+function renderCard(key){
+  const i=window['fcIndex_'+key], data=decks[key];
+  const card=document.getElementById('fc-'+key);
+  card.classList.remove('flipped');
+  card.querySelector('.front').textContent=data[i][0];
+  card.querySelector('.back').textContent=data[i][1];
+  document.getElementById('fc-count-'+key).textContent=(i+1)+' / '+data.length;
+}
+function deckNav(key,dir){
+  const data=decks[key];
+  window['fcIndex_'+key]=(window['fcIndex_'+key]+dir+data.length)%data.length;
+  renderCard(key);
+}
+document.querySelectorAll('.deck-wrap').forEach(buildDeck);
+
+/* ---------- TABS / SUBNAV ---------- */
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); document.getElementById(b.dataset.panel).classList.add('active');
+}));
+document.querySelectorAll('.subnav').forEach(nav=>{
+  nav.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    nav.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+    nav.parentElement.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); document.getElementById(b.dataset.sec).classList.add('active');
+  }));
+});
+
+/* ---------- FILL-IN EXERCISES ---------- */
+const fillData = {
+  household:{
+    bank:["vacuum the floor","do the laundry","wash up","make the bed","tidy my room","take the rubbish out"],
+    items:[
+      ["Every morning I ___ before breakfast.","make the bed"],
+      ["On Saturdays I have to ___ in the living room.","vacuum the floor"],
+      ["After dinner it's my turn to ___.","wash up"],
+      ["My mum asks me to ___ every Sunday.","do the laundry"],
+      ["I never forget to ___ on Tuesdays.","take the rubbish out"],
+      ["Before my friends come over I ___.","tidy my room"]]
+  },
+  g1:{
+    bank:["have to","has to","don't have to","doesn't have to"],
+    items:[
+      ["Tom ___ make his bed every day (obligación).","has to"],
+      ["We ___ wash the car, dad does it (no obligación).","don't have to"],
+      ["I ___ walk the dog after school (obligación).","have to"],
+      ["My sister ___ cook, she's too young (no obligación).","doesn't have to"]]
+  },
+  trans_g2:null, // handled separately
+  g3:{
+    bank:null,
+    items:[
+      ["Incorrecta: 'You must to wear a helmet.' → Correcta:","You must wear a helmet."],
+      ["Incorrecta: 'She mustn't goes out at night.' → Correcta:","She mustn't go out at night."],
+      ["Incorrecta: 'We must not eating in class.' → Correcta:","We must not eat in class."]]
+  },
+  g5:{
+    bank:null,
+    items:[
+      ["Past — I ___ (ride) a bike when I was five.","could ride"],
+      ["Present — She ___ (speak) three languages.","can speak"],
+      ["Future — They ___ (able/swim) very well after lessons.","will be able to swim"],
+      ["Negative present — He ___ (drive) yet, he's only 15.","can't drive"]]
+  }
+};
+function renderFill(id,data,withBank){
+  const c=document.getElementById(id);
+  let html='';
+  data.items.forEach((it,idx)=>{
+    html+=`<div class="ex-item" id="${id}-${idx}"><p>${it[0]}</p>
+    <input type="text" data-ans="${it[1]}" placeholder="respuesta..."></div>`;
+  });
+  c.innerHTML=html;
+  if(withBank){
+    const wb=document.getElementById('wb-'+id.split('-')[1]);
+    if(wb) wb.innerHTML=fillData[id.split('-')[1]].bank.map(w=>`<span>${w}</span>`).join('');
+  }
+}
+renderFill('fill-household',fillData.household,true);
+renderFill('fill-g1',fillData.g1,false);
+renderFill('fill-g3',fillData.g3,false);
+renderFill('fill-g5',fillData.g5,false);
+
+// sentence transformation g2
+(function(){
+  const items=[
+    ["I am not allowed to go out. → (permission, negative)","I can't go out."],
+    ["Is it OK for you to stay up late? → (permission, question)","Can you stay up late?"],
+    ["It's fine for us to use the pool. → (permission, affirmative)","We can use the pool."]];
+  const c=document.getElementById('trans-g2');
+  c.innerHTML=items.map((it,i)=>`<div class="ex-item" id="trans-g2-${i}"><p>${it[0]}</p>
+    <input type="text" data-ans="${it[1]}" placeholder="respuesta..."></div>`).join('');
+})();
+
+function checkFill(id){
+  const c=document.getElementById(id);
+  let correct=0,total=0;
+  c.querySelectorAll('.ex-item').forEach(item=>{
+    const inp=item.querySelector('input');
+    total++;
+    const ok=inp.value.trim().toLowerCase()===inp.dataset.ans.toLowerCase();
+    item.classList.remove('correct','wrong');
+    item.classList.add(ok?'correct':'wrong');
+    if(ok)correct++;
+  });
+  document.getElementById('fb-'+id).textContent=`${correct} / ${total} correctas`;
+  document.getElementById('fb-'+id).className='feedback '+(correct===total?'ok':'bad');
+}
+
+/* ---------- MATCHING (household) ---------- */
+(function(){
+  const pairs=decks.household;
+  const shuffledEs=pairs.map(p=>p[1]).sort(()=>Math.random()-0.5);
+  const c=document.getElementById('match-household');
+  c.innerHTML=pairs.map((p,i)=>`<div class="ex-item" id="match-household-${i}">
+    <b>${p[0]}</b> →
+    <select data-ans="${p[1]}">
+      <option value="">-- elige --</option>
+      ${shuffledEs.map(es=>`<option value="${es}">${es}</option>`).join('')}
+    </select></div>`).join('');
+})();
+function checkMatch(id){
+  const c=document.getElementById(id);
+  let correct=0,total=0;
+  c.querySelectorAll('.ex-item').forEach(item=>{
+    const sel=item.querySelector('select');
+    total++;
+    const ok=sel.value===sel.dataset.ans;
+    item.classList.remove('correct','wrong');
+    item.classList.add(ok?'correct':'wrong');
+    if(ok)correct++;
+  });
+  document.getElementById('fb-'+id).textContent=`${correct} / ${total} correctas`;
+  document.getElementById('fb-'+id).className='feedback '+(correct===total?'ok':'bad');
+}
+
+/* ---------- ODD ONE OUT (freetime) ---------- */
+const oddRows=[
+  {words:["chess","judo","karate","kickboxing"],odd:"chess",note:"chess no es un deporte de lucha"},
+  {words:["hiking","climbing","surfing","chess"],odd:"chess",note:"chess no es una actividad al aire libre"},
+  {words:["bowling","gymnastics","hockey","handball"],odd:"bowling",note:"bowling no es un deporte de equipo"},
+  {words:["athletics","fitness training","hiking","judo"],odd:"judo",note:"judo es un arte marcial, no cardio individual"}
+];
+(function(){
+  const c=document.getElementById('odd-freetime');
+  c.innerHTML=oddRows.map((r,i)=>`<div class="ex-item" id="odd-freetime-${i}" data-ans="${r.odd}">
+    <div class="opt-row">${r.words.map(w=>`<label><input type="radio" name="odd-${i}" value="${w}"> ${w}</label>`).join('')}</div>
+  </div>`).join('');
+})();
+function checkOdd(id){
+  const c=document.getElementById(id);
+  let correct=0,total=0;
+  c.querySelectorAll('.ex-item').forEach(item=>{
+    total++;
+    const sel=item.querySelector('input:checked');
+    const ok=sel && sel.value===item.dataset.ans;
+    item.classList.remove('correct','wrong');
+    item.classList.add(ok?'correct':'wrong');
+    if(ok)correct++;
+  });
+  document.getElementById('fb-'+id).textContent=`${correct} / ${total} correctas`;
+  document.getElementById('fb-'+id).className='feedback '+(correct===total?'ok':'bad');
+}
+
+/* ---------- SORTING (freetime) ---------- */
+const sortWords={individual:["athletics","bowling","chess","climbing","fitness training","gymnastics","hiking","judo","karate","surfing"],
+  team:["handball","hockey"]};
+(function(){
+  const all=[...sortWords.individual,...sortWords.team].sort(()=>Math.random()-0.5);
+  const c=document.getElementById('sort-freetime');
+  c.innerHTML=all.map((w,i)=>`<div class="ex-item" id="sort-freetime-${i}" data-ans="${sortWords.individual.includes(w)?'individual':'team'}">
+    <b>${w}</b>
+    <select><option value="">-- categoría --</option><option value="individual">Individual</option><option value="team">Equipo</option></select>
+  </div>`).join('');
+})();
+function checkSort(id){
+  const c=document.getElementById(id);
+  let correct=0,total=0;
+  c.querySelectorAll('.ex-item').forEach(item=>{
+    total++;
+    const sel=item.querySelector('select');
+    const ok=sel.value===item.dataset.ans;
+    item.classList.remove('correct','wrong');
+    item.classList.add(ok?'correct':'wrong');
+    if(ok)correct++;
+  });
+  document.getElementById('fb-'+id).textContent=`${correct} / ${total} correctas`;
+  document.getElementById('fb-'+id).className='feedback '+(correct===total?'ok':'bad');
+}
+
+/* ---------- MULTIPLE CHOICE (personality reverse quiz + g6 scenarios) ---------- */
+const mcData={
+  personality:[
+    {q:"Siempre dice la verdad.",opts:["honest","funny","generous"],ans:"honest"},
+    {q:"Ayuda a los demás sin que se lo pidan.",opts:["helpful","confident","kind"],ans:"helpful"},
+    {q:"Comparte lo que tiene sin problema.",opts:["loyal","generous","cheerful"],ans:"generous"},
+    {q:"Nunca traiciona a sus amigos.",opts:["loyal","interesting","confident"],ans:"loyal"},
+    {q:"Cree en sí mismo/a y no tiene miedo.",opts:["confident","kind","honest"],ans:"confident"}
+  ],
+  g6:[
+    {q:"Your friend has a bad cold. What do you say?",opts:["You should see a doctor.","You must see a doctor.","You can see a doctor."],ans:"You should see a doctor."},
+    {q:"Giving advice about exercise:",opts:["You mustn't exercise.","You ought to exercise more.","You are allowed to exercise."],ans:"You ought to exercise more."},
+    {q:"Recommending NOT to do something:",opts:["You shouldn't stay up so late.","You have to stay up late.","You can stay up late."],ans:"You shouldn't stay up so late."}
+  ]
+};
+function renderMC(id,data){
+  const c=document.getElementById(id);
+  c.innerHTML=data.map((it,i)=>`<div class="ex-item" id="${id}-${i}" data-ans="${it.ans}">
+    <p>${it.q}</p>
+    <div class="opt-row">${it.opts.map(o=>`<label><input type="radio" name="${id}-${i}" value="${o}"> ${o}</label>`).join('')}</div>
+  </div>`).join('');
+}
+renderMC('mc-personality',mcData.personality);
+renderMC('mc-g6',mcData.g6);
+function checkMC(id){
+  const c=document.getElementById(id);
+  let correct=0,total=0;
+  c.querySelectorAll('.ex-item').forEach(item=>{
+    total++;
+    const sel=item.querySelector('input:checked');
+    const ok=sel && sel.value===item.dataset.ans;
+    item.classList.remove('correct','wrong');
+    item.classList.add(ok?'correct':'wrong');
+    if(ok)correct++;
+  });
+  document.getElementById('fb-'+id).textContent=`${correct} / ${total} correctas`;
+  document.getElementById('fb-'+id).className='feedback '+(correct===total?'ok':'bad');
+}
+
+/* ---------- REVERSE QUIZ g4 (open, model answers) ---------- */
+const revG4=[
+  ["Respuesta: 'Yes, I am allowed to use my phone at lunchtime.'","Are you allowed to use your phone at lunchtime?"],
+  ["Respuesta: 'No, we aren't allowed to leave early.'","Are you allowed to leave early?"],
+  ["Respuesta: 'Yes, she is allowed to watch that film.'","Is she allowed to watch that film?"]
+];
+(function(){
+  const c=document.getElementById('rev-g4');
+  c.innerHTML=revG4.map((it,i)=>`<div class="ex-item" id="rev-g4-${i}">
+    <p>${it[0]}</p><input type="text" placeholder="Escribe la pregunta...">
+    <p class="feedback" style="display:none" id="model-rev-g4-${i}">Modelo: <i>${it[1]}</i></p>
+  </div>`).join('');
+})();
+
+/* ---------- SELF-CHECK (open production) ---------- */
+function selfCheck(inputId,fbId,revealModels){
+  if(revealModels){
+    document.querySelectorAll('[id^="model-rev-g4-"]').forEach(el=>el.style.display='block');
+    document.getElementById(fbId).textContent='Compara tus preguntas con los modelos de arriba.';
+    document.getElementById(fbId).className='feedback ok';
+    return;
+  }
+  const txt=document.getElementById(inputId).value.trim();
+  const words=["cheerful","confident","generous","honest","loyal"];
+  const used=words.filter(w=>txt.toLowerCase().includes(w));
+  const fb=document.getElementById(fbId);
+  if(txt.length<10){fb.textContent='Escribe al menos una frase completa.';fb.className='feedback bad';return;}
+  fb.textContent = used.length>=3
+    ? `¡Bien! Has usado ${used.length} adjetivos: ${used.join(', ')}.`
+    : `Usa al menos 3 adjetivos de la lista (llevas ${used.length}: ${used.join(', ')||'ninguno'}).`;
+  fb.className='feedback '+(used.length>=3?'ok':'bad');
+}
+</script>
+</body>
+</html>
